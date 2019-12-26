@@ -62,16 +62,59 @@ namespace TestePostgres.Controller
 				{
 					throw;
 				}
-				finally
+			}
+		}
+
+		public void AlteraCliente(string cpf, Cliente novosDados)
+		{
+			string cmd = $"UPDATE cliente SET Nome= {novosDados.Nome}, Cpf = {novosDados.Cpf}, Idade={novosDados.Idade} WHERE Cpf = {cpf}";
+
+			using (NpgsqlConnection connection = ConnectionFactory.CreateConnection())
+			{
+				try
 				{
-					connection.Close();
+					connection.Open();
+					using (NpgsqlCommand command = new NpgsqlCommand(cmd, connection))
+					{
+						command.ExecuteNonQuery();
+					}
+				}
+				catch (NpgsqlException)
+				{
+					Console.WriteLine("Ocorreu um erro ao realizar o update");
+				}
+				catch (Exception)
+				{
+					throw;
 				}
 			}
 		}
 
-		public void AlteraCliente(string cpf, Cliente novosDados) { }
+		public void DeletaCliente(string cpf)
+		{
+			string query = $"DELETE FROM public.cliente	WHERE Cpf = {cpf}";
+			using (NpgsqlConnection connection = ConnectionFactory.CreateConnection())
+			{
+				connection.Open();
+				try
+				{
+					using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+					{
+						command.ExecuteNonQuery();
+					}
+				}
+				catch (NpgsqlException)
+				{
+					Console.WriteLine("Ocorreu um erro ao deletar o cliente");
+				}
+				catch (Exception)
+				{
+					throw;
+				}
+			}
 
-		public void DeletaCliente(string cpf) { }
+
+		}
 
 	}
 }
